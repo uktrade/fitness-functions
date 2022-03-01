@@ -11,7 +11,6 @@ def run(project_directory):
     if not os.path.isdir(project_fitness_directory):
         os.mkdir(project_fitness_directory)
         # create default config file
-        # create sqlite database
 
     connection = sqlite3.connect(os.path.join(project_fitness_directory, 'fitness_metrics.db'))
     connection.execute("""
