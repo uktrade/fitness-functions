@@ -72,6 +72,3 @@ def run(project_directory):
         INSERT INTO FITNESS_METRICS(date_collected, metrics) VALUES('{today_string}', '{json.dumps(collected_metrics)}')
     """)
     connection.commit()
-
-
-run('/Users/christopherpettinga/Dropbox/Department for International Trade/trade-remedies-api/trade_remedies_api')
