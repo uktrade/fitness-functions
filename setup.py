@@ -6,5 +6,10 @@ setup(
     description='Fitness Functions used to measure and display codebase health',
     author='Christopher Pettinga',
     author_email='chris.pettinga@digital.trade.gov.uk',
-    packages=find_packages(include=['fitness-functions', 'fitness-functions.*'])
+    packages=find_packages(include=['fitness_functions', 'fitness_functions.*']),
+    entry_points={
+        'console_scripts': [
+            'fitness-functions = fitness_functions.__main__:main',
+        ],
+    },
 )

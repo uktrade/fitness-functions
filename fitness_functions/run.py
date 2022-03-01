@@ -1,20 +1,8 @@
 import datetime
+import json
 import os
 import sqlite3
-import json
 import subprocess
-from io import StringIO
-
-import pylint.lint
-from pylint.reporters.json_reporter import JSONReporter
-import glob
-import importlib
-import sys
-from os import listdir
-from os.path import dirname
-from pkgutil import iter_modules
-
-from setuptools import find_packages
 
 
 def run(project_directory):
