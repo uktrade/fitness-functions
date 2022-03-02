@@ -57,6 +57,7 @@ def run(project_path, code_path):
             coverage_data = json.load(json_file)
             collected_metrics['average_coverage'] = round(coverage_data["totals"]["percent_covered"], 2)
             collected_metrics["covered_lines"] = coverage_data["totals"]["covered_lines"]
+        os.remove(coverage_json_report)
 
     today_string = datetime.datetime.today().isoformat()
 
