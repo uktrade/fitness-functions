@@ -1,5 +1,6 @@
 import datetime
 import json
+import sys
 import os
 import sqlite3
 import subprocess
@@ -65,3 +66,5 @@ def run(project_path, code_path):
         INSERT INTO FITNESS_METRICS(date_collected, metrics) VALUES('{today_string}', '{json.dumps(collected_metrics)}')
     """)
     connection.commit()
+    string_collected_metrics = [f"{key} ---- {value}\n" for key, value in collected_metrics.items()]
+    print('Fitness Functions have finished:\n\n', *string_collected_metrics)
