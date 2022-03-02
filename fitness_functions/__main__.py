@@ -33,8 +33,8 @@ def main():
         try:
             project_path = get_path(args[1])
             code_path = get_path(args[2])
-            if invalid_path := not os.path.isdir(project_path) or not os.path.isdir(code_path):
-                print(f'Please provide a valid directory to run fitness functions on. {invalid_path} does not exist.')
+            if not os.path.isdir(project_path) or not os.path.isdir(code_path):
+                print(f'Please provide valid directory(ies) to run fitness functions on.')
             else:
                 if args[0] == 'run':
                     run(project_path, code_path)
@@ -42,6 +42,8 @@ def main():
                     publish(project_path, code_path)
         except IndexError:
             print(f'Not enough arguments were passed, please see:\n{__doc__}')
+    else:
+        print(__doc__)
 
 
 if __name__ == '__main__':

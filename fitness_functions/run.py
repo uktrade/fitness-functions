@@ -3,9 +3,8 @@ import json
 import os
 import sqlite3
 import subprocess
-import sys
-from pkgutil import iter_modules
 from pathlib import Path
+
 from setuptools import find_packages
 
 
