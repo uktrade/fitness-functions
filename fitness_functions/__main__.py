@@ -14,36 +14,53 @@ Options:
 'publish' will generate a graph using the <project_path>/fitness/fitness_metrics.db data, save it as a base64 PNG
 string in the READ.ME file located in <project_path>
 """
-import importlib
-import sys
+import argparse
 import os
-from run import run
+
 from publish import publish
+from run import run
 
 
-def get_path(path):
-    return os.getcwd() if path == '.' else path
+class PathAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        if values == '.':
+            values = os.getcwd()
+        else:
+            if not os.path.isdir(values):
+                raise argparse.ArgumentTypeError(f"{values} is not a valid directory.")
+        setattr(namespace, self.dest, values)
 
 
 def main():
-    args = sys.argv[1:]
-    if len(args) < 1:
-        print(__doc__)
-    elif args[0] in ['run', 'publish']:
-        try:
-            project_path = get_path(args[1])
-            code_path = get_path(args[2])
-            if not os.path.isdir(project_path) or not os.path.isdir(code_path):
-                print(f'Please provide valid directory(ies) to run fitness functions on.')
-            else:
-                if args[0] == 'run':
-                    run(project_path, code_path)
-                elif args[0] == 'publish':
-                    publish(project_path, code_path)
-        except IndexError:
-            print(f'Not enough arguments were passed, please see:\n{__doc__}')
-    else:
-        print(__doc__)
+    my_parser = argparse.ArgumentParser(
+        prog='fitness-functions',
+        description='Collect and display code quality metrics for your application.',
+    )
+    my_parser.add_argument(
+        'action',
+        choices=['run', 'publish'],
+        type=str,
+        help="What you would like to do, 'run' (collect metrics) or 'publish' (graph and save to READ.ME."
+    )
+    my_parser.add_argument(
+        'project_path',
+        metavar='project_path',
+        type=str,
+        help='The path of the project directory containing the codebase',
+        action=PathAction
+    )
+    my_parser.add_argument(
+        'code_path',
+        metavar='code_path',
+        type=str,
+        help='The path of the directory containing the code you would like to run fitness functions on',
+        action=PathAction
+    )
+    args = my_parser.parse_args()
+    if args.action == 'run':
+        run(args.project_path, args.code_path)
+    if args.action == 'publish':
+        publish(args.project_path, args.code_path)
 
 
 if __name__ == '__main__':
