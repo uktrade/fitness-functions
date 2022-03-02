@@ -3,11 +3,15 @@ import json
 import os
 import sqlite3
 import subprocess
+import sys
+from pkgutil import iter_modules
+from pathlib import Path
+from setuptools import find_packages
 
 
-def run(project_directory):
+def run(project_path, code_path):
     collected_metrics = {}
-    project_fitness_directory = os.path.join(project_directory, 'fitness')
+    project_fitness_directory = os.path.join(project_path, 'fitness')
     if not os.path.isdir(project_fitness_directory):
         os.mkdir(project_fitness_directory)
         # create default config file
@@ -22,7 +26,7 @@ def run(project_directory):
     """)
 
     noqa_occurrences = subprocess.run(
-        f"grep -R --include=\"*.py\" \"# noqa\" \"{project_directory}\" | wc -l",
+        f"grep -R --include=\"*.py\" \"# noqa\" \"{code_path}\" | wc -l",
         capture_output=True,
         text=True,
         shell=True,
@@ -31,7 +35,7 @@ def run(project_directory):
     collected_metrics['noqa_occurrences'] = noqa_occurrences.stdout.strip()
 
     lines_of_code = subprocess.run(
-        f"find \"{project_directory}\" \( -path '*/migrations' \) -prune -o -type f -exec cat {{}} + | wc -l",
+        f"find \"{code_path}\" \( -path '*/migrations' \) -prune -o -type f -exec cat {{}} + | wc -l",
         shell=True,
         capture_output=True,
         text=True,
@@ -39,19 +43,22 @@ def run(project_directory):
     )
     collected_metrics['lines_of_code'] = lines_of_code.stdout.strip()
 
-    '''init_file = os.path.join(project_directory, '__init__.py')
-    if not os.path.exists(init_file):
-        open(init_file, 'w').close()
+    package_sizes = []
+    for pkg in find_packages(code_path):
+        pkgpath = os.path.join(code_path, pkg.replace('.', os.path.sep))
+        root_directory = Path(pkgpath)
+        package_size = (sum(f.stat().st_size for f in root_directory.glob('**/*') if f.is_file()))/float(1 << 10)  # Kb
+        package_sizes.append(package_size)
 
-    pylint_output = StringIO()  # Custom open stream
-    reporter = JSONReporter(pylint_output)
-    pylint.lint.Run(
-        ['--disable=C0114', '--disable=C0116', '--disable=C0115', '--disable=E0401', project_directory],
-        reporter=reporter,
-        do_exit=False
-    )
+    collected_metrics['average_package_size'] = round(sum(package_sizes) / len(package_sizes), 2)
+    collected_metrics['largest_package_size'] = round(max(package_sizes), 2)
 
-    os.remove(init_file)'''
+    coverage_json_report = os.path.join(project_path, 'coverage.json')
+    if Path(coverage_json_report).is_file():
+        with open(coverage_json_report) as json_file:
+            coverage_data = json.load(json_file)
+            collected_metrics['average_coverage'] = round(coverage_data["totals"]["percent_covered"], 2)
+            collected_metrics["covered_lines"] = coverage_data["totals"]["covered_lines"]
 
     today_string = datetime.datetime.today().isoformat()
 
