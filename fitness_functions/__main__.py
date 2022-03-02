@@ -17,9 +17,6 @@ string in the READ.ME file located in <project_path>
 import argparse
 import os
 
-from publish import publish
-from run import run
-
 
 class PathAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
@@ -32,6 +29,9 @@ class PathAction(argparse.Action):
 
 
 def main():
+    from .publish import publish
+    from .run import run
+
     my_parser = argparse.ArgumentParser(
         prog='fitness-functions',
         description='Collect and display code quality metrics for your application.',
@@ -61,7 +61,3 @@ def main():
         run(args.project_path, args.code_path)
     if args.action == 'publish':
         publish(args.project_path, args.code_path)
-
-
-if __name__ == '__main__':
-    main()

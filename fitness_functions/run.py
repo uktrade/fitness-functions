@@ -13,7 +13,6 @@ def run(project_path, code_path):
     project_fitness_directory = os.path.join(project_path, 'fitness')
     if not os.path.isdir(project_fitness_directory):
         os.mkdir(project_fitness_directory)
-        # create default config file
 
     connection = sqlite3.connect(os.path.join(project_fitness_directory, 'fitness_metrics.db'))
     connection.execute("""
