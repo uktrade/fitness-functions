@@ -16,4 +16,4 @@ class TestMetricCollection(FitnessFunctionsTestBase):
         self.assertEqual(self.collected_metrics['noqa_occurrences'], '1')
 
     def test_line_of_code(self):
-        self.assertEqual(self.collected_metrics['lines_of_code'], '2')
+        self.assertEqual(self.collected_metrics['lines_of_code'], '3')
