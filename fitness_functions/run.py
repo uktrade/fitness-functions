@@ -1,6 +1,5 @@
 import datetime
 import json
-import sys
 import os
 import sqlite3
 import subprocess
@@ -46,11 +45,13 @@ def run(project_path, code_path):
     for pkg in find_packages(code_path):
         pkgpath = os.path.join(code_path, pkg.replace('.', os.path.sep))
         root_directory = Path(pkgpath)
-        package_size = (sum(f.stat().st_size for f in root_directory.glob('**/*') if f.is_file()))/float(1 << 10)  # Kb
+        package_size = (sum(f.stat().st_size for f in root_directory.glob('**/*') if f.is_file())) / float(
+            1 << 10)  # Kb
         package_sizes.append(package_size)
 
-    collected_metrics['average_package_size'] = round(sum(package_sizes) / len(package_sizes), 2)
-    collected_metrics['largest_package_size'] = round(max(package_sizes), 2)
+    if package_sizes:
+        collected_metrics['average_package_size'] = round(sum(package_sizes) / len(package_sizes), 2)
+        collected_metrics['largest_package_size'] = round(max(package_sizes), 2)
 
     coverage_json_report = os.path.join(project_path, 'coverage.json')
     if Path(coverage_json_report).is_file():
@@ -68,3 +69,4 @@ def run(project_path, code_path):
     connection.commit()
     string_collected_metrics = [f"{key} ---- {value}\n" for key, value in collected_metrics.items()]
     print('Fitness Functions have finished:\n\n', *string_collected_metrics)
+    return collected_metrics
