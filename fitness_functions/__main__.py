@@ -54,10 +54,11 @@ def main():
         metavar='code_path',
         type=str,
         help='The path of the directory containing the code you would like to run fitness functions on',
-        action=PathAction
+        action=PathAction,
+        required=False
     )
     args = my_parser.parse_args()
     if args.action == 'run':
         run(args.project_path, args.code_path)
     if args.action == 'publish':
-        publish(args.project_path, args.code_path)
+        publish(args.project_path)
