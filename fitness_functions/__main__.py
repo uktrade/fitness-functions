@@ -55,7 +55,6 @@ def main():
         type=str,
         help='The path of the directory containing the code you would like to run fitness functions on',
         action=PathAction,
-        required=False
     )
     args = my_parser.parse_args()
     if args.action == 'run':
