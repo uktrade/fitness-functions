@@ -1,19 +1,20 @@
 import os
 import ast
 import sqlite3
-import matplotlib.pyplot as plt
 from datetime import datetime
-
+from itertools import islice
+import matplotlib.pyplot as plt
 from sklearn import preprocessing
 
 
-def normalise(fitness_array):
-    normalised_array = preprocessing.normalize([fitness_array])
-    digestible_array = [round(int(n), 2)*100 for n in normalised_array[0]]
-    return digestible_array
+# Function to normalise the graph data
+def normalise(fitness_dictionary):
+    for key, value in islice(fitness_dictionary.items(), 1, None):
+        fitness_dictionary[key] = [round(n*100, 0) for n in preprocessing.normalize([value])[0]]
+    return fitness_dictionary
 
 
-def publish(project_path, code_path):
+def publish(project_path):
     project_fitness_directory = os.path.join(project_path, 'fitness')
 
     connection = sqlite3.connect(os.path.join(project_fitness_directory, 'fitness_metrics.db'))
@@ -23,36 +24,31 @@ def publish(project_path, code_path):
         cur.execute("SELECT * FROM FITNESS_METRICS")
         fitness_metrics_array = cur.fetchall()
 
-    dates = []
-    noqa_occurrences = []
-    lines_of_code = []
-    average_package_size = []
-    largest_package_size = []
-    average_coverage = []
-    covered_lines = []
-
+    # Intialise empty dictionary
+    fitness_metrics_dict = {"dates": []}
     for record in fitness_metrics_array:
-        dates.append(datetime.strptime(record[1], '%Y-%m-%dT%H:%M:%S.%f'))
-
         literal_metrics_dict = ast.literal_eval(record[2])
+        fitness_metrics_keys = {key: [] for key in literal_metrics_dict.keys()}
+        fitness_metrics_dict.update(fitness_metrics_keys)
 
-        noqa_occurrences.append(float(literal_metrics_dict.get("noqa_occurrences")))
-        lines_of_code.append(float(literal_metrics_dict.get("lines_of_code")))
-        average_package_size.append(float(literal_metrics_dict.get("average_package_size")))
-        largest_package_size.append(float(literal_metrics_dict.get("largest_package_size")))
-        average_coverage.append(float(literal_metrics_dict.get("average_coverage")) if literal_metrics_dict.get("average_coverage") else 0)
-        covered_lines.append(float(literal_metrics_dict.get("covered_lines")) if literal_metrics_dict.get("covered_lines") else 0)
+    # Populate dictionary with applicable data
+    for record in fitness_metrics_array:
+        literal_metrics_dict = ast.literal_eval(record[2])
+        fitness_metrics_dict["dates"].append(datetime.strptime(record[1], '%Y-%m-%dT%H:%M:%S.%f').strftime("%d/%m/%Y"))
+        for key, value in literal_metrics_dict.items():
+            fitness_metrics_dict[key].append((int(value)))
 
-    plt.plot(dates, normalise(average_package_size), label='Average package size')
-    plt.plot(dates, normalise(largest_package_size), label='Largest package size')
-    plt.plot(dates, normalise(average_coverage), label='Average coverage')
-    plt.plot(dates, normalise(noqa_occurrences), label='noqa occurrences')
-    plt.plot(dates, normalise(covered_lines), label='Covered lines')
+    fitness_metrics_dict = normalise(fitness_metrics_dict)
 
+    # Plot graph data points
+    for key, value in islice(fitness_metrics_dict.items(), 1, None):
+        plt.plot(fitness_metrics_dict["dates"], value, label=key.replace("_", " ").capitalize())
+
+    # Stylise graph
     plt.xlabel('Date')
     plt.ylabel('Normalised value')
+    plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left', prop={'size': 6})
+    plt.tight_layout()
 
-    plt.legend()
-    plt.show()
-
+    # Save graph to fitness folder in project
     plt.savefig(os.path.join(project_fitness_directory, 'fitness_metrics_graph.png'))
