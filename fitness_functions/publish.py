@@ -45,10 +45,12 @@ def publish(project_path):
         plt.plot(fitness_metrics_dict["dates"], value, label=key.replace("_", " ").capitalize())
 
     # Stylise graph
+    plt.title('Fitness metrics')
     plt.xlabel('Date')
     plt.ylabel('Normalised value')
     plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left', prop={'size': 6})
     plt.tight_layout()
 
     # Save graph to fitness folder in project
-    plt.savefig(os.path.join(project_fitness_directory, 'fitness_metrics_graph.png'))
+    return plt.savefig(os.path.join(project_fitness_directory, 'fitness_metrics_graph.png'))
+
