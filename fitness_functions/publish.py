@@ -5,20 +5,26 @@ from datetime import datetime
 from itertools import islice
 import matplotlib.pyplot as plt
 from sklearn import preprocessing
+from fitness_functions.run import run
 
 
 # Function to normalise the graph data
 def normalise(fitness_dictionary):
     for key, value in islice(fitness_dictionary.items(), 1, None):
-        fitness_dictionary[key] = [round(n*100, 0) for n in preprocessing.normalize([value])[0]]
+        fitness_dictionary[key] = [round(n * 100, 0) for n in preprocessing.normalize([value])[0]]
     return fitness_dictionary
 
 
-def publish(project_path):
+def publish(project_path, code_path):
     project_fitness_directory = os.path.join(project_path, 'fitness')
 
-    connection = sqlite3.connect(os.path.join(project_fitness_directory, 'fitness_metrics.db'))
-    cur = connection.cursor()
+    try:
+        connection = sqlite3.connect(os.path.join(project_fitness_directory, 'fitness_metrics.db'))
+        cur = connection.cursor()
+    except:
+        run(project_path, code_path)
+        connection = sqlite3.connect(os.path.join(project_fitness_directory, 'fitness_metrics.db'))
+        cur = connection.cursor()
 
     with connection:
         cur.execute("SELECT * FROM FITNESS_METRICS")

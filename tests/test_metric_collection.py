@@ -3,11 +3,11 @@ from tests import FitnessFunctionsTestBase
 
 
 class TestMetricCollection(FitnessFunctionsTestBase):
-    mock_project_path = 'tests/mock_code_path'
-    mock_python_file = 'tests/mock_code_path/mock_file.py'
+    mock_project_path = None
+    mock_python_file = 'mock_code_path/mock_file.py'
 
     def run_metric_collection(self):
-        return run(self.mock_project_path, self.mock_python_file)
+        return run(self.mock_project_path, 'mock_code_path')
 
     def setUp(self) -> None:
         self.collected_metrics = self.run_metric_collection()
