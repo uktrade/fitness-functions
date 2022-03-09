@@ -53,4 +53,3 @@ def publish(project_path):
 
     # Save graph to fitness folder in project
     return plt.savefig(os.path.join(project_fitness_directory, 'fitness_metrics_graph.png'))
-
