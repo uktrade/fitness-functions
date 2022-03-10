@@ -1,7 +1,7 @@
 import math
 import os
 import tempfile
-from fitness_functions import publish
+from fitness_functions import publish, run
 from tests import FitnessFunctionsTestBase
 from fitness_functions.publish import normalise
 
@@ -32,5 +32,6 @@ class TestMetricCollection(FitnessFunctionsTestBase):
         with tempfile.TemporaryDirectory() as self.mock_project_path:
             mock_project_path = self.mock_project_path
             mock_graph_path = os.path.join(mock_project_path, 'fitness/fitness_metrics_graph.png')
-            publish(mock_project_path, mock_project_path)
+            run(mock_project_path, mock_project_path)
+            publish(mock_project_path)
             assert os.path.isfile(mock_graph_path) and os.access(mock_graph_path, os.R_OK)

@@ -5,7 +5,7 @@ from datetime import datetime
 from itertools import islice
 import matplotlib.pyplot as plt
 from sklearn import preprocessing
-from fitness_functions.run import run
+import json
 
 
 # Function to normalise the graph data
@@ -15,16 +15,11 @@ def normalise(fitness_dictionary):
     return fitness_dictionary
 
 
-def publish(project_path, code_path):
+def publish(project_path):
     project_fitness_directory = os.path.join(project_path, 'fitness')
 
-    try:
-        connection = sqlite3.connect(os.path.join(project_fitness_directory, 'fitness_metrics.db'))
-        cur = connection.cursor()
-    except:
-        run(project_path, code_path)
-        connection = sqlite3.connect(os.path.join(project_fitness_directory, 'fitness_metrics.db'))
-        cur = connection.cursor()
+    connection = sqlite3.connect(os.path.join(project_fitness_directory, 'fitness_metrics.db'))
+    cur = connection.cursor()
 
     with connection:
         cur.execute("SELECT * FROM FITNESS_METRICS")
@@ -33,7 +28,7 @@ def publish(project_path, code_path):
     # Intialise empty dictionary
     fitness_metrics_dict = {"dates": []}
     for record in fitness_metrics_array:
-        literal_metrics_dict = ast.literal_eval(record[2])
+        literal_metrics_dict = json.loads(record[2])
         fitness_metrics_keys = {key: [] for key in literal_metrics_dict.keys()}
         fitness_metrics_dict.update(fitness_metrics_keys)
 
