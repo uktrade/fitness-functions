@@ -34,7 +34,7 @@ def publish(project_path):
 
     # Populate dictionary with applicable data
     for record in fitness_metrics_array:
-        literal_metrics_dict = ast.literal_eval(record[2])
+        literal_metrics_dict = json.loads(record[2])
         fitness_metrics_dict["dates"].append(datetime.strptime(record[1], '%Y-%m-%dT%H:%M:%S.%f').strftime("%d/%m/%Y"))
         for key, value in literal_metrics_dict.items():
             fitness_metrics_dict[key].append((int(value)))

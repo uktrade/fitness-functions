@@ -29,9 +29,7 @@ class TestMetricCollection(FitnessFunctionsTestBase):
         self.assertEqual(normalise_data['noqa_occurrences'], normalised_array)
 
     def test_publish_function(self):
-        with tempfile.TemporaryDirectory() as self.mock_project_path:
-            mock_project_path = self.mock_project_path
-            mock_graph_path = os.path.join(mock_project_path, 'fitness/fitness_metrics_graph.png')
-            run(mock_project_path, mock_project_path)
-            publish(mock_project_path)
-            assert os.path.isfile(mock_graph_path) and os.access(mock_graph_path, os.R_OK)
+        mock_graph_path = os.path.join(self.mock_project_path, 'fitness/fitness_metrics_graph.png')
+        run(self.mock_project_path, self.mock_project_path)
+        publish(self.mock_project_path)
+        assert os.path.isfile(mock_graph_path) and os.access(mock_graph_path, os.R_OK)
