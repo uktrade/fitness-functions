@@ -1,6 +1,5 @@
 import math
 import os
-import tempfile
 from fitness_functions import publish, run
 from tests import FitnessFunctionsTestBase
 from fitness_functions.publish import normalise

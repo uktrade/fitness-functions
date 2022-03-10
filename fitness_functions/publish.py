@@ -1,11 +1,10 @@
+import json
 import os
-import ast
 import sqlite3
 from datetime import datetime
 from itertools import islice
 import matplotlib.pyplot as plt
 from sklearn import preprocessing
-import json
 
 
 # Function to normalise the graph data
