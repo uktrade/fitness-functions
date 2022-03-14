@@ -5,19 +5,24 @@ from datetime import datetime
 from itertools import islice
 import matplotlib.pyplot as plt
 from sklearn import preprocessing
+from collections import OrderedDict
 
 
 # Function to normalise the graph data
 def normalise(fitness_dictionary):
     for key, value in islice(fitness_dictionary.items(), 1, None):
-        fitness_dictionary[key] = [round(n * 100, 0) for n in preprocessing.normalize([value])[0]]
+        fitness_dictionary[key] = [
+            round(n * 100, 0) for n in preprocessing.normalize([value])[0]
+        ]
     return fitness_dictionary
 
 
 def publish(project_path):
-    project_fitness_directory = os.path.join(project_path, 'fitness')
+    project_fitness_directory = os.path.join(project_path, "fitness")
 
-    connection = sqlite3.connect(os.path.join(project_fitness_directory, 'fitness_metrics.db'))
+    connection = sqlite3.connect(
+        os.path.join(project_fitness_directory, "fitness_metrics.db")
+    )
     cur = connection.cursor()
 
     with connection:
@@ -32,9 +37,28 @@ def publish(project_path):
         fitness_metrics_dict.update(fitness_metrics_keys)
 
     # Populate dictionary with applicable data
+    check_all_keys_exist = {}
     for record in fitness_metrics_array:
         literal_metrics_dict = json.loads(record[2])
-        fitness_metrics_dict["dates"].append(datetime.strptime(record[1], '%Y-%m-%dT%H:%M:%S.%f').strftime("%d/%m/%Y"))
+        for key in literal_metrics_dict.keys():
+            if key not in check_all_keys_exist.keys():
+                check_all_keys_exist = literal_metrics_dict
+
+    for record in fitness_metrics_array:
+        literal_metrics_dict = json.loads(record[2])
+        for key in check_all_keys_exist.keys():
+            if key not in literal_metrics_dict.keys():
+                literal_metrics_dict[key] = 0
+
+        for key in check_all_keys_exist.keys():
+            if key not in literal_metrics_dict.keys():
+                literal_metrics_dict[key] = 0
+                check_all_keys_exist = literal_metrics_dict
+
+        fitness_metrics_dict["dates"].append(
+            datetime.strptime(record[1], "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y")
+        )
+        print(literal_metrics_dict)
         for key, value in literal_metrics_dict.items():
             fitness_metrics_dict[key].append((int(value)))
 
@@ -42,14 +66,25 @@ def publish(project_path):
 
     # Plot graph data points
     for key, value in islice(fitness_metrics_dict.items(), 1, None):
-        plt.plot(fitness_metrics_dict["dates"], value, label=key.replace("_", " ").capitalize())
+        plt.plot(
+            fitness_metrics_dict["dates"],
+            value,
+            label=key.replace("_", " ").capitalize(),
+        )
 
     # Stylise graph
-    plt.title('Fitness metrics')
-    plt.xlabel('Date')
-    plt.ylabel('Normalised value')
-    plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left', prop={'size': 6})
+    plt.title("Fitness metrics")
+    plt.xlabel("Date")
+    plt.ylabel("Normalised value")
+    plt.legend(bbox_to_anchor=(1.05, 1.0), loc="upper left", prop={"size": 6})
     plt.tight_layout()
 
     # Save graph to fitness folder in project
-    return plt.savefig(os.path.join(project_fitness_directory, 'fitness_metrics_graph.png'))
+    return plt.savefig(
+        os.path.join(project_fitness_directory, "fitness_metrics_graph.png")
+    ), print(
+        f'Updated fitness metrics graph published to {os.path.join(project_fitness_directory, "fitness_metrics_graph.png")}'
+    )
+
+
+publish('/Users/dituser/Documents/GitHub/trade-remedies-api')

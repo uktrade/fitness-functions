@@ -1,3 +1,3 @@
-print('test')  # noqa
+print("test")  # noqa
 
-print('hello')
+print("hello")
