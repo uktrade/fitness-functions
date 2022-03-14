@@ -5,7 +5,6 @@ from datetime import datetime
 from itertools import islice
 import matplotlib.pyplot as plt
 from sklearn import preprocessing
-from collections import OrderedDict
 
 
 # Function to normalise the graph data
@@ -36,29 +35,23 @@ def publish(project_path):
         fitness_metrics_keys = {key: [] for key in literal_metrics_dict.keys()}
         fitness_metrics_dict.update(fitness_metrics_keys)
 
-    # Populate dictionary with applicable data
-    check_all_keys_exist = {}
+    # Update each record with the same metric keys
+    metric_keys_dict = {}
     for record in fitness_metrics_array:
-        literal_metrics_dict = json.loads(record[2])
-        for key in literal_metrics_dict.keys():
-            if key not in check_all_keys_exist.keys():
-                check_all_keys_exist = literal_metrics_dict
+        for key in json.loads(record[2]).keys():
+            if key not in metric_keys_dict.keys():
+                metric_keys_dict = json.loads(record[2])
 
     for record in fitness_metrics_array:
         literal_metrics_dict = json.loads(record[2])
-        for key in check_all_keys_exist.keys():
+        for key in metric_keys_dict.keys():
             if key not in literal_metrics_dict.keys():
                 literal_metrics_dict[key] = 0
 
-        for key in check_all_keys_exist.keys():
-            if key not in literal_metrics_dict.keys():
-                literal_metrics_dict[key] = 0
-                check_all_keys_exist = literal_metrics_dict
-
+        # Populate dictionary with applicable data
         fitness_metrics_dict["dates"].append(
             datetime.strptime(record[1], "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y")
         )
-        print(literal_metrics_dict)
         for key, value in literal_metrics_dict.items():
             fitness_metrics_dict[key].append((int(value)))
 
@@ -83,8 +76,7 @@ def publish(project_path):
     return plt.savefig(
         os.path.join(project_fitness_directory, "fitness_metrics_graph.png")
     ), print(
-        f'Updated fitness metrics graph published to {os.path.join(project_fitness_directory, "fitness_metrics_graph.png")}'
+        "Metrics published:\n",
+        *[f"{key}\n" for key, value in islice(fitness_metrics_dict.items(), 1, None)],
+        f'\nUpdated fitness metrics graph published to {os.path.join(project_fitness_directory, "fitness_metrics_graph.png")}',
     )
-
-
-publish('/Users/dituser/Documents/GitHub/trade-remedies-api')
