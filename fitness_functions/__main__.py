@@ -20,7 +20,7 @@ import os
 
 class PathAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
-        if values == '.':
+        if values == ".":
             values = os.getcwd()
         else:
             if not os.path.isdir(values):
@@ -33,31 +33,31 @@ def main():
     from .run import run
 
     my_parser = argparse.ArgumentParser(
-        prog='fitness-functions',
-        description='Collect and display code quality metrics for your application.',
+        prog="fitness-functions",
+        description="Collect and display code quality metrics for your application.",
     )
     my_parser.add_argument(
-        'action',
-        choices=['run', 'publish'],
+        "action",
+        choices=["run", "publish"],
         type=str,
-        help="What you would like to do, 'run' (collect metrics) or 'publish' (graph and save to READ.ME."
+        help="What you would like to do, 'run' (collect metrics) or 'publish' (graph and save to READ.ME.",
     )
     my_parser.add_argument(
-        'project_path',
-        metavar='project_path',
+        "project_path",
+        metavar="project_path",
         type=str,
-        help='The path of the project directory containing the codebase',
-        action=PathAction
+        help="The path of the project directory containing the codebase",
+        action=PathAction,
     )
     my_parser.add_argument(
-        'code_path',
-        metavar='code_path',
+        "code_path",
+        metavar="code_path",
         type=str,
-        help='The path of the directory containing the code you would like to run fitness functions on',
+        help="The path of the directory containing the code you would like to run fitness functions on",
         action=PathAction,
     )
     args = my_parser.parse_args()
-    if args.action == 'run':
+    if args.action == "run":
         run(args.project_path, args.code_path)
-    if args.action == 'publish':
+    if args.action == "publish":
         publish(args.project_path)
