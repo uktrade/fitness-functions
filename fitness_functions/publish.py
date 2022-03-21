@@ -66,6 +66,7 @@ def publish(project_path):
         )
 
     # Stylise graph
+    plt.xticks(rotation=45, ha='right')
     plt.title("Fitness metrics")
     plt.xlabel("Date")
     plt.ylabel("Normalised value")
