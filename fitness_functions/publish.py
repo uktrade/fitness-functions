@@ -4,15 +4,19 @@ import sqlite3
 from datetime import datetime
 from itertools import islice
 import matplotlib.pyplot as plt
-from sklearn import preprocessing
 
 
 # Function to normalise the graph data
 def normalise(fitness_dictionary):
     for key, value in islice(fitness_dictionary.items(), 1, None):
-        fitness_dictionary[key] = [
-            round(n * 100, 0) for n in preprocessing.normalize([value])[0]
-        ]
+        norm_range = max(value) - min(value)
+        norm_array = []
+        for n in value:
+            if norm_range != 0:
+                norm_array.append(((n-min(value))/norm_range)*100)
+            else:
+                norm_array.append((1/len(value))*100)
+        fitness_dictionary[key] = norm_array
     return fitness_dictionary
 
 
@@ -63,7 +67,7 @@ def publish(project_path):
             fitness_metrics_dict["dates"],
             value,
             label=key.replace("_", " ").capitalize(),
-            marker='x'
+            marker='2'
         )
 
     # Stylise graph
