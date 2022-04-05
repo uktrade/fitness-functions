@@ -63,6 +63,7 @@ def publish(project_path):
             fitness_metrics_dict["dates"],
             value,
             label=key.replace("_", " ").capitalize(),
+            marker='x'
         )
 
     # Stylise graph
@@ -71,6 +72,7 @@ def publish(project_path):
     plt.ylabel("Normalised value")
     plt.legend(bbox_to_anchor=(1.05, 1.0), loc="upper left", prop={"size": 6})
     plt.tight_layout()
+    plt.gca().axes.get_xaxis().set_ticks([fitness_metrics_dict["dates"][0], fitness_metrics_dict["dates"][-1]])
 
     # Save graph to fitness folder in project
     return plt.savefig(
