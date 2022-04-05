@@ -2,7 +2,7 @@
 
 Usage:
   fitness-functions run <project_path> <code_path>
-  fitness-functions publish <project_path> <code_path>
+  fitness-functions publish <project_path>
 
 Options:
   <project_path>     The path of the project directory containing the codebase
