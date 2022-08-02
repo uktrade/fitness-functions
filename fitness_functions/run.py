@@ -27,6 +27,21 @@ def run(project_path, code_path):
     """
     )
 
+    # Very hacky way to stop this from being executed over and over again in pre-commit hooks
+    with connection:
+        cur = connection.cursor()
+        cur.execute("""
+                SELECT * 
+                FROM FITNESS_METRICS 
+                WHERE rowid = (SELECT MAX(rowid) FROM FITNESS_METRICS);
+            """)
+        latest_record = cur.fetchone()
+        latest_datetime = datetime.datetime.fromisoformat(latest_record[1])
+        if (datetime.datetime.now() - latest_datetime).seconds < 30:
+            # Basically we can't run this twice within 10 seconds
+            print("Fitness Functions ran within last 10 seconds, ignoring")
+            return True
+
     noqa_occurrences = subprocess.run(
         f'grep -R --include="*.py" "# noqa" "{code_path}" | wc -l',
         capture_output=True,
@@ -50,8 +65,8 @@ def run(project_path, code_path):
         pkgpath = os.path.join(code_path, pkg.replace(".", os.path.sep))
         root_directory = Path(pkgpath)
         package_size = (
-            sum(f.stat().st_size for f in root_directory.glob("**/*") if f.is_file())
-        ) / float(
+                           sum(f.stat().st_size for f in root_directory.glob("**/*") if f.is_file())
+                       ) / float(
             1 << 10
         )  # Kb
         package_sizes.append(package_size)

@@ -28,19 +28,11 @@ class PathAction(argparse.Action):
         setattr(namespace, self.dest, values)
 
 
-def main():
-    from .publish import publish
+def run():
     from .run import run
-
     my_parser = argparse.ArgumentParser(
-        prog="fitness-functions",
-        description="Collect and display code quality metrics for your application.",
-    )
-    my_parser.add_argument(
-        "action",
-        choices=["run", "publish"],
-        type=str,
-        help="What you would like to do, 'run' (collect metrics) or 'publish' (graph and save to READ.ME.",
+        prog="fitness-functions-run",
+        description="Collect code quality metrics for your application.",
     )
     my_parser.add_argument(
         "project_path",
@@ -57,7 +49,21 @@ def main():
         action=PathAction,
     )
     args = my_parser.parse_args()
-    if args.action == "run":
-        run(args.project_path, args.code_path)
-    if args.action == "publish":
-        publish(args.project_path)
+    run(args.project_path, args.code_path)
+
+
+def publish():
+    from .publish import publish
+    my_parser = argparse.ArgumentParser(
+        prog="fitness-functions-publish",
+        description="Publish code quality metrics for your application.",
+    )
+    my_parser.add_argument(
+        "project_path",
+        metavar="project_path",
+        type=str,
+        help="The path of the project directory containing the codebase",
+        action=PathAction,
+    )
+    args = my_parser.parse_args()
+    publish(args.project_path)

@@ -10,7 +10,11 @@ setup(
     packages=find_packages(include=["fitness_functions", "fitness_functions.*"]),
     entry_points={
         "console_scripts": [
-            "fitness-functions = fitness_functions.__main__:main",
+            "fitness-functions-run = fitness_functions.__main__:run",
+            "fitness-functions-publish = fitness_functions.__main__:publish",
         ],
     },
+    install_requires=[
+        'matplotlib',
+    ]
 )

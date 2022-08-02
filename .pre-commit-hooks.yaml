@@ -1,0 +1,10 @@
+-   id: fitness-functions-run
+    name: run fitness functions
+    entry: fitness-functions-run
+    language: python
+    require_serial: true
+-   id: fitness-functions-publish
+    name: publish fitness functions
+    entry: fitness-functions-publish
+    language: python
+    require_serial: true

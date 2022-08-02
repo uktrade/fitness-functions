@@ -4,6 +4,7 @@ import sqlite3
 from collections import defaultdict
 from datetime import datetime
 from itertools import islice
+
 import matplotlib.pyplot as plt
 
 colours = {
@@ -17,13 +18,28 @@ colours = {
     7: "purple"
 }
 
+
 def publish(project_path):
     project_fitness_directory = os.path.join(project_path, "fitness")
-
+    print(f"Publishing fitness functions in {project_fitness_directory}")
     connection = sqlite3.connect(
         os.path.join(project_fitness_directory, "fitness_metrics.db")
     )
     cur = connection.cursor()
+
+    # Very hacky way to stop this from being executed over and over again in pre-commit hooks
+    with connection:
+        cur.execute("""
+                    SELECT * 
+                    FROM FITNESS_METRICS 
+                    WHERE rowid = (SELECT MAX(rowid) FROM FITNESS_METRICS);
+                """)
+        latest_record = cur.fetchone()
+        latest_datetime = datetime.fromisoformat(latest_record[1])
+        if (datetime.now() - latest_datetime).seconds < 30:
+            # Basically we can't run this twice within 10 seconds
+            print("Fitness Functions ran within last 10 seconds, ignoring")
+            return True
 
     with connection:
         cur.execute("SELECT * FROM FITNESS_METRICS")
