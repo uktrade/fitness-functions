@@ -67,39 +67,3 @@ def publish():
     )
     args = my_parser.parse_args()
     publish(args.project_path)
-
-
-def main():
-    from .publish import publish
-    from .run import run
-
-    my_parser = argparse.ArgumentParser(
-        prog="fitness-functions",
-        description="Collect and display code quality metrics for your application.",
-    )
-    my_parser.add_argument(
-        "action",
-        metavar="action",
-        choices=["run", "publish"],
-        type=str,
-        help="What you would like to do, 'run' (collect metrics) or 'publish' (graph and save to .png)",
-    )
-    my_parser.add_argument(
-        "project_path",
-        metavar="project_path",
-        type=str,
-        help="The path of the project directory containing the codebase",
-        action=PathAction,
-    )
-    my_parser.add_argument(
-        "code_path",
-        metavar="code_path",
-        type=str,
-        help="The path of the directory containing the code you would like to run fitness functions on",
-        action=PathAction,
-    )
-    args = my_parser.parse_args()
-    if args.action == "run":
-        run(args.project_path, args.code_path)
-    if args.action == "publish":
-        publish(args.project_path)
