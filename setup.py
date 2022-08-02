@@ -13,4 +13,7 @@ setup(
             "fitness-functions = fitness_functions.__main__:main",
         ],
     },
+    install_requires=[
+        'matplotlib',
+    ]
 )
