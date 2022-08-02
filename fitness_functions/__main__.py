@@ -38,9 +38,10 @@ def main():
     )
     my_parser.add_argument(
         "action",
+        metavar="action",
         choices=["run", "publish"],
         type=str,
-        help="What you would like to do, 'run' (collect metrics) or 'publish' (graph and save to READ.ME.",
+        help="What you would like to do, 'run' (collect metrics) or 'publish' (graph and save to .png)",
     )
     my_parser.add_argument(
         "project_path",
