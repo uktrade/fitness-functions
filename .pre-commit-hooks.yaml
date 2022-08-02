@@ -1,0 +1,4 @@
+-   id: fitness-functions
+    name: run and publish fitness functions
+    entry: fitness-functions
+    language: python
