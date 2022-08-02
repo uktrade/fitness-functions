@@ -19,7 +19,7 @@ colours = {
 
 def publish(project_path):
     project_fitness_directory = os.path.join(project_path, "fitness")
-
+    print(f"Publishing fitness functions in {project_fitness_directory}")
     connection = sqlite3.connect(
         os.path.join(project_fitness_directory, "fitness_metrics.db")
     )
