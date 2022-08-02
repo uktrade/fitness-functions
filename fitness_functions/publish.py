@@ -7,8 +7,6 @@ from itertools import islice
 
 import matplotlib.pyplot as plt
 
-from fitness_functions.utils import check_last_collection
-
 colours = {
     0: "red",
     1: "green",

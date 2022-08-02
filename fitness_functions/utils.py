@@ -1,7 +1,7 @@
 import datetime
 
 
-def check_last_collection(connection, minimum_time_seconds=30):
+def check_last_collection(connection, minimum_time_seconds=120):
     # Very hacky way to stop this from being executed over and over again in pre-commit hooks
     with connection:
         cur = connection.cursor()
