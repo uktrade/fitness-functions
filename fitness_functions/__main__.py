@@ -55,8 +55,8 @@ def run():
 def publish():
     from .publish import publish
     my_parser = argparse.ArgumentParser(
-        prog="fitness-functions-run",
-        description="Collect code quality metrics for your application.",
+        prog="fitness-functions-publish",
+        description="Publish code quality metrics for your application.",
     )
     my_parser.add_argument(
         "project_path",
