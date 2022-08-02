@@ -1,4 +1,8 @@
--   id: fitness-functions
-    name: run and publish fitness functions
-    entry: fitness-functions
+-   id: fitness-functions-run
+    name: run fitness functions
+    entry: fitness-functions-run
+    language: python
+-   id: fitness-functions-publish
+    name: publish fitness functions
+    entry: fitness-functions-publish
     language: python
