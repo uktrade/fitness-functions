@@ -59,10 +59,10 @@ def publish():
         description="Collect code quality metrics for your application.",
     )
     my_parser.add_argument(
-        "code_path",
-        metavar="code_path",
+        "project_path",
+        metavar="project_path",
         type=str,
-        help="The path of the directory containing the code you would like to run fitness functions on",
+        help="The path of the project directory containing the codebase",
         action=PathAction,
     )
     args = my_parser.parse_args()
