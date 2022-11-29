@@ -48,6 +48,18 @@ def run(project_path, code_path):
         )
         collected_metrics["lines_of_code"] = lines_of_code.stdout.strip()
 
+        if lines_of_code:
+            number_of_files = subprocess.run(
+                f"find \"{code_path}\" \( -path '*/migrations' \) -o -type f | wc -l",
+                shell=True,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            collected_metrics["average_lines_of_code_per_file"] = round(
+                int(collected_metrics["lines_of_code"]) / int(number_of_files.stdout.strip()), 2
+            )
+
         package_sizes = []
         for pkg in find_packages(code_path):
             pkgpath = os.path.join(code_path, pkg.replace(".", os.path.sep))
@@ -65,17 +77,6 @@ def run(project_path, code_path):
             )
             collected_metrics["largest_package_size"] = round(max(package_sizes), 2)
 
-        coverage_json_report = os.path.join(project_path, "coverage.json")
-        if Path(coverage_json_report).is_file():
-            with open(coverage_json_report) as json_file:
-                coverage_data = json.load(json_file)
-                collected_metrics["average_coverage"] = round(
-                    coverage_data["totals"]["percent_covered"], 2
-                )
-                collected_metrics["covered_lines"] = coverage_data["totals"][
-                    "covered_lines"
-                ]
-            os.remove(coverage_json_report)
 
         today_string = datetime.datetime.today().isoformat()
 
